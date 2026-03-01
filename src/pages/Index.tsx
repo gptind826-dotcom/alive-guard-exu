@@ -33,11 +33,11 @@ const Index = () => {
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-primary animate-pulse-neon" />
             <h1 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-wider neon-text-cyan">
-              KeepAlive Protocol
+              XSU Codex
             </h1>
           </div>
           <p className="font-mono text-xs text-muted-foreground ml-11">
-            // Autonomous endpoint monitoring & keep-alive system v2.0
+            // Autonomous endpoint keep-alive system // interval: 60s
           </p>
 
           {/* Status bar */}
@@ -117,7 +117,7 @@ const Index = () => {
         {/* Footer */}
         <footer className="mt-8 text-center">
           <p className="font-mono text-[10px] text-muted-foreground">
-            KEEPALIVE PROTOCOL // INTERVAL: 30s // MODE: NO-CORS
+            XSU CODEX // INTERVAL: 60s // MODE: KEEP-ALIVE // 24/7
           </p>
         </footer>
       </div>

@@ -1,77 +1,84 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { ApiEndpoint, PingResult, EndpointStats } from "@/types/api";
+import { supabase } from "@/integrations/supabase/client";
 
-const PING_INTERVAL = 30000; // 30 seconds
-const STORAGE_KEY = "keepalive-endpoints";
-const LOGS_KEY = "keepalive-logs";
+const PING_INTERVAL = 60000; // 60 seconds (1 minute)
 
 function generateId() {
   return Math.random().toString(36).substring(2, 10);
 }
 
-function loadEndpoints(): ApiEndpoint[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored).map((e: any) => ({
-        ...e,
-        addedAt: new Date(e.addedAt),
-      }));
-    }
-  } catch {}
-  return [];
-}
-
-function saveEndpoints(endpoints: ApiEndpoint[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(endpoints));
-}
-
-function loadLogs(): PingResult[] {
-  try {
-    const stored = localStorage.getItem(LOGS_KEY);
-    if (stored) {
-      return JSON.parse(stored).map((l: any) => ({
-        ...l,
-        timestamp: new Date(l.timestamp),
-      }));
-    }
-  } catch {}
-  return [];
-}
-
-function saveLogs(logs: PingResult[]) {
-  // Keep last 500 logs
-  const trimmed = logs.slice(-500);
-  localStorage.setItem(LOGS_KEY, JSON.stringify(trimmed));
-}
-
 export function useKeepAlive() {
-  const [endpoints, setEndpoints] = useState<ApiEndpoint[]>(loadEndpoints);
-  const [logs, setLogs] = useState<PingResult[]>(loadLogs);
+  const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
+  const [logs, setLogs] = useState<PingResult[]>([]);
   const [isRunning, setIsRunning] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const addEndpoint = useCallback((url: string, name?: string) => {
-    const endpoint: ApiEndpoint = {
-      id: generateId(),
-      url: url.trim(),
-      name: name || new URL(url.trim()).hostname,
-      addedAt: new Date(),
-    };
-    setEndpoints((prev) => {
-      const next = [...prev, endpoint];
-      saveEndpoints(next);
-      return next;
-    });
-    return endpoint;
+  // Load endpoints from DB
+  const loadEndpoints = useCallback(async () => {
+    const { data } = await supabase
+      .from("endpoints")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: true });
+    if (data) {
+      setEndpoints(
+        data.map((e: any) => ({
+          id: e.id,
+          url: e.url,
+          name: e.name,
+          addedAt: new Date(e.created_at),
+        }))
+      );
+    }
   }, []);
 
-  const removeEndpoint = useCallback((id: string) => {
-    setEndpoints((prev) => {
-      const next = prev.filter((e) => e.id !== id);
-      saveEndpoints(next);
-      return next;
-    });
+  // Load recent logs from DB
+  const loadLogs = useCallback(async () => {
+    const { data } = await supabase
+      .from("ping_logs")
+      .select("*")
+      .order("created_at", { ascending: true })
+      .limit(200);
+    if (data) {
+      setLogs(
+        data.map((l: any) => ({
+          id: l.id,
+          endpointId: l.endpoint_id,
+          url: l.url,
+          status: l.status as "online" | "offline" | "error",
+          statusCode: l.status_code,
+          responseTime: l.response_time,
+          timestamp: new Date(l.created_at),
+          message: l.message || "",
+        }))
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    loadEndpoints();
+    loadLogs();
+  }, [loadEndpoints, loadLogs]);
+
+  const addEndpoint = useCallback(async (url: string, name?: string) => {
+    const label = name || new URL(url.trim()).hostname;
+    const { data, error } = await supabase
+      .from("endpoints")
+      .insert({ url: url.trim(), name: label, is_active: true })
+      .select()
+      .single();
+    if (data && !error) {
+      setEndpoints((prev) => [
+        ...prev,
+        { id: data.id, url: data.url, name: data.name, addedAt: new Date(data.created_at) },
+      ]);
+    }
+  }, []);
+
+  const removeEndpoint = useCallback(async (id: string) => {
+    await supabase.from("endpoints").delete().eq("id", id);
+    setEndpoints((prev) => prev.filter((e) => e.id !== id));
   }, []);
 
   const pingEndpoint = useCallback(async (endpoint: ApiEndpoint): Promise<PingResult> => {
@@ -83,7 +90,6 @@ export function useKeepAlive() {
         cache: "no-cache",
       });
       const elapsed = Math.round(performance.now() - start);
-      // no-cors returns opaque response with status 0
       const isOpaque = response.type === "opaque";
       return {
         id: generateId(),
@@ -93,7 +99,7 @@ export function useKeepAlive() {
         statusCode: isOpaque ? 200 : response.status,
         responseTime: elapsed,
         timestamp: new Date(),
-        message: isOpaque ? "Request sent (opaque response - CORS)" : `HTTP ${response.status}`,
+        message: isOpaque ? "Request sent (opaque - CORS)" : `HTTP ${response.status}`,
       };
     } catch (err: any) {
       const elapsed = Math.round(performance.now() - start);
@@ -111,27 +117,22 @@ export function useKeepAlive() {
   }, []);
 
   const pingAll = useCallback(async () => {
-    const currentEndpoints = loadEndpoints();
-    if (currentEndpoints.length === 0) return;
+    if (endpoints.length === 0) return;
+    const results = await Promise.all(endpoints.map(pingEndpoint));
+    setLogs((prev) => [...prev, ...results]);
+    // Also refresh DB logs
+    setTimeout(loadLogs, 2000);
+  }, [endpoints, pingEndpoint, loadLogs]);
 
-    const results = await Promise.all(currentEndpoints.map(pingEndpoint));
-    setLogs((prev) => {
-      const next = [...prev, ...results];
-      saveLogs(next);
-      return next;
-    });
-  }, [pingEndpoint]);
-
-  const clearLogs = useCallback(() => {
+  const clearLogs = useCallback(async () => {
     setLogs([]);
-    localStorage.removeItem(LOGS_KEY);
+    // Clear DB logs
+    await supabase.from("ping_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   }, []);
 
-  // Auto-ping on mount and interval
+  // Auto-ping from browser too
   useEffect(() => {
     if (isRunning && endpoints.length > 0) {
-      // Initial ping
-      pingAll();
       intervalRef.current = setInterval(pingAll, PING_INTERVAL);
     }
     return () => {
