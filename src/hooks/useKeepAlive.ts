@@ -78,10 +78,11 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
       .select()
       .single();
     if (data && !error) {
-      setEndpoints((prev) => [
-        ...prev,
-        { id: data.id, url: data.url, name: data.name, addedAt: new Date(data.created_at) },
-      ]);
+      const newEp = { id: data.id, url: data.url, name: data.name, addedAt: new Date(data.created_at) };
+      setEndpoints((prev) => [...prev, newEp]);
+      // Immediately ping the new endpoint
+      const result = await pingEndpoint(newEp);
+      setLogs((prev) => [...prev, result]);
     }
   }, [userId]);
 
