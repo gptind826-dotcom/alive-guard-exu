@@ -93,11 +93,12 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
 
   const pingEndpoint = useCallback(async (endpoint: ApiEndpoint): Promise<PingResult> => {
     const start = performance.now();
+    let result: PingResult;
     try {
       const response = await fetch(endpoint.url, { method: "GET", mode: "no-cors", cache: "no-cache" });
       const elapsed = Math.round(performance.now() - start);
       const isOpaque = response.type === "opaque";
-      return {
+      result = {
         id: generateId(),
         endpointId: endpoint.id,
         url: endpoint.url,
@@ -109,7 +110,7 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
       };
     } catch (err: any) {
       const elapsed = Math.round(performance.now() - start);
-      return {
+      result = {
         id: generateId(),
         endpointId: endpoint.id,
         url: endpoint.url,
@@ -120,6 +121,18 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
         message: err.message || "Network error",
       };
     }
+
+    // Persist to database
+    await supabase.from("ping_logs").insert({
+      endpoint_id: result.endpointId,
+      url: result.url,
+      status: result.status,
+      status_code: result.statusCode,
+      response_time: result.responseTime,
+      message: result.message,
+    });
+
+    return result;
   }, []);
 
   const pingAll = useCallback(async () => {
