@@ -50,7 +50,7 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
       .limit(500);
     if (data) {
       setLogs(
-        data.map((l: any) => ({
+        data.reverse().map((l: any) => ({
           id: l.id,
           endpointId: l.endpoint_id,
           url: l.url,
