@@ -17,18 +17,13 @@ const Auth = () => {
     if (!email) return;
     setLoading(true);
     setError("");
-
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
       options: { shouldCreateUser: true },
     });
-
     setLoading(false);
-    if (otpError) {
-      setError(otpError.message);
-    } else {
-      setStep("otp");
-    }
+    if (otpError) setError(otpError.message);
+    else setStep("otp");
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -36,19 +31,14 @@ const Auth = () => {
     if (!otp) return;
     setLoading(true);
     setError("");
-
     const { error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token: otp,
       type: "email",
     });
-
     setLoading(false);
-    if (verifyError) {
-      setError(verifyError.message);
-    } else {
-      navigate("/");
-    }
+    if (verifyError) setError(verifyError.message);
+    else navigate("/");
   };
 
   const handleGoogleLogin = async () => {
@@ -60,28 +50,28 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background cyber-grid flex items-center justify-center relative">
-      <div className="fixed inset-0 scanline pointer-events-none z-50 opacity-20" />
-
       <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="border border-border rounded-sm bg-card/80 p-8 backdrop-blur-sm">
+        <div className="glass rounded-2xl p-8">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <Shield className="w-12 h-12 text-primary animate-pulse-neon mb-4" />
-            <h1 className="text-2xl font-display font-bold uppercase tracking-wider neon-text-cyan">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+              <Shield className="w-7 h-7 text-primary" />
+            </div>
+            <h1 className="text-2xl font-display font-bold text-foreground">
               XSU Codex
             </h1>
-            <p className="font-mono text-xs text-muted-foreground mt-2">
-              // Authentication Required
+            <p className="font-mono text-xs text-muted-foreground mt-1">
+              Sign in to continue
             </p>
           </div>
 
-          <div className="border-t border-border mb-6" />
+          <div className="border-t border-border/50 mb-6" />
 
           {/* Email OTP */}
           {step === "email" ? (
             <form onSubmit={handleSendOtp} className="space-y-4 mb-6">
               <div>
-                <label className="font-mono text-[10px] uppercase text-muted-foreground tracking-widest mb-1.5 block">
+                <label className="font-display text-xs font-medium text-muted-foreground mb-1.5 block">
                   Email Address
                 </label>
                 <div className="relative">
@@ -90,8 +80,8 @@ const Auth = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="operator@domain.com"
-                    className="w-full pl-10 pr-4 py-3 border border-border bg-background/50 text-foreground rounded-sm font-mono text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:shadow-[0_0_10px_hsl(var(--primary)/0.2)] transition-all"
+                    placeholder="you@example.com"
+                    className="w-full pl-10 pr-4 py-3 glass rounded-xl font-mono text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                     required
                   />
                 </div>
@@ -99,7 +89,7 @@ const Auth = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-primary bg-primary/10 text-primary rounded-sm font-display text-xs uppercase tracking-widest hover:bg-primary/20 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-xl font-display text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -117,7 +107,7 @@ const Auth = () => {
                 Code sent to <span className="text-primary">{email}</span>
               </p>
               <div>
-                <label className="font-mono text-[10px] uppercase text-muted-foreground tracking-widest mb-1.5 block">
+                <label className="font-display text-xs font-medium text-muted-foreground mb-1.5 block">
                   Verification Code
                 </label>
                 <input
@@ -126,25 +116,21 @@ const Auth = () => {
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 border border-border bg-background/50 text-foreground rounded-sm font-mono text-sm text-center tracking-[0.5em] placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:shadow-[0_0_10px_hsl(var(--primary)/0.2)] transition-all"
+                  className="w-full px-4 py-3 glass rounded-xl font-mono text-sm text-center tracking-[0.5em] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   required
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-primary bg-primary/10 text-primary rounded-sm font-display text-xs uppercase tracking-widest hover:bg-primary/20 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-xl font-display text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
               >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "Verify & Login"
-                )}
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Login"}
               </button>
               <button
                 type="button"
                 onClick={() => { setStep("email"); setOtp(""); setError(""); }}
-                className="w-full font-mono text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                className="w-full font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
               >
                 ← Use different email
               </button>
@@ -152,22 +138,20 @@ const Auth = () => {
           )}
 
           {error && (
-            <p className="font-mono text-xs text-destructive text-center mb-4">
-              {error}
-            </p>
+            <p className="font-mono text-xs text-destructive text-center mb-4">{error}</p>
           )}
 
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 border-t border-border" />
-            <span className="font-mono text-[10px] text-muted-foreground uppercase">or</span>
-            <div className="flex-1 border-t border-border" />
+            <div className="flex-1 border-t border-border/50" />
+            <span className="font-mono text-xs text-muted-foreground">or</span>
+            <div className="flex-1 border-t border-border/50" />
           </div>
 
           {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-border bg-background/50 text-foreground rounded-sm font-display text-xs uppercase tracking-widest hover:border-primary/50 hover:bg-primary/5 transition-all"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 glass rounded-xl font-display text-sm font-medium text-foreground hover:scale-[1.01] transition-all"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -178,8 +162,8 @@ const Auth = () => {
             Sign in with Google
           </button>
 
-          <p className="font-mono text-[10px] text-muted-foreground text-center mt-6">
-            SECURE ACCESS // ENCRYPTED CHANNEL
+          <p className="font-mono text-[11px] text-muted-foreground text-center mt-6">
+            Secure authentication
           </p>
         </div>
       </div>

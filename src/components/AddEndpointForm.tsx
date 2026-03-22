@@ -13,19 +13,8 @@ export function AddEndpointForm({ onAdd }: AddEndpointFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
-    if (!url.trim()) {
-      setError("URL is required");
-      return;
-    }
-    
-    try {
-      new URL(url.trim());
-    } catch {
-      setError("Invalid URL format");
-      return;
-    }
-
+    if (!url.trim()) { setError("URL is required"); return; }
+    try { new URL(url.trim()); } catch { setError("Invalid URL format"); return; }
     onAdd(url, name || undefined);
     setUrl("");
     setName("");
@@ -39,24 +28,24 @@ export function AddEndpointForm({ onAdd }: AddEndpointFormProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Label (optional)"
-          className="flex-shrink-0 sm:w-40 px-3 py-2 bg-muted border border-border rounded-sm font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:shadow-[0_0_8px_hsl(var(--primary)/0.3)] transition-all"
+          className="flex-shrink-0 sm:w-40 px-3 py-2.5 glass rounded-xl font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
         <input
           type="text"
           value={url}
           onChange={(e) => { setUrl(e.target.value); setError(""); }}
           placeholder="https://your-api-url.com"
-          className="flex-1 px-3 py-2 bg-muted border border-border rounded-sm font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:shadow-[0_0_8px_hsl(var(--primary)/0.3)] transition-all"
+          className="flex-1 px-3 py-2.5 glass rounded-xl font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
         />
         <button
           type="submit"
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 border border-primary text-primary rounded-sm font-display text-xs uppercase tracking-widest hover:bg-primary/20 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] transition-all"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl font-display text-sm font-medium hover:opacity-90 transition-all"
         >
           <Plus className="w-4 h-4" />
-          Deploy
+          Add
         </button>
       </div>
-      {error && <p className="text-destructive text-xs font-mono">[ERROR] {error}</p>}
+      {error && <p className="text-destructive text-xs font-mono">{error}</p>}
     </form>
   );
 }

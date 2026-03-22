@@ -11,11 +11,11 @@ export function LogPanel({ logs, onClear }: LogPanelProps) {
   const reversed = [...logs].reverse();
 
   return (
-    <div className="border border-border rounded-sm bg-card overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
+    <div className="glass rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border/30">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse-neon" style={{ backgroundColor: "hsl(150 100% 50%)" }} />
-          <span className="font-display text-xs uppercase tracking-widest text-foreground">
+          <div className="w-2 h-2 rounded-full bg-accent animate-pulse-neon" />
+          <span className="font-display text-sm font-semibold text-foreground">
             System Logs
           </span>
         </div>
@@ -24,15 +24,15 @@ export function LogPanel({ logs, onClear }: LogPanelProps) {
           className="flex items-center gap-1 text-muted-foreground hover:text-destructive text-xs font-mono transition-colors"
         >
           <Trash2 className="w-3 h-3" />
-          FLUSH
+          Clear
         </button>
       </div>
 
       <ScrollArea className="h-80">
-        <div className="p-3 space-y-0.5">
+        <div className="p-4 space-y-1">
           {reversed.length === 0 && (
             <p className="font-mono text-xs text-muted-foreground text-center py-8">
-              // Awaiting ping data...
+              Waiting for ping data...
             </p>
           )}
           {reversed.map((log) => (
@@ -41,14 +41,14 @@ export function LogPanel({ logs, onClear }: LogPanelProps) {
                 [{log.timestamp.toLocaleTimeString()}]
               </span>
               <span
-                className="shrink-0"
+                className="shrink-0 font-medium"
                 style={{
                   color:
                     log.status === "online"
-                      ? "hsl(150 100% 50%)"
+                      ? "hsl(160 70% 42%)"
                       : log.status === "offline"
-                      ? "hsl(0 100% 55%)"
-                      : "hsl(50 100% 55%)",
+                      ? "hsl(0 72% 55%)"
+                      : "hsl(40 90% 50%)",
                 }}
               >
                 {log.status === "online" ? "✓ OK" : log.status === "offline" ? "✗ DOWN" : "⚠ ERR"}
