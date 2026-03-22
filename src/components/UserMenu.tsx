@@ -9,33 +9,27 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user, profile, onSignOut }: UserMenuProps) {
-  const name = profile?.display_name || user.email?.split("@")[0] || "Operator";
+  const name = profile?.display_name || user.email?.split("@")[0] || "User";
   const avatar = profile?.avatar_url;
 
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2">
         {avatar ? (
-          <img
-            src={avatar}
-            alt={name}
-            className="w-7 h-7 rounded-full border border-primary/50"
-          />
+          <img src={avatar} alt={name} className="w-8 h-8 rounded-full border-2 border-primary/20" />
         ) : (
-          <div className="w-7 h-7 rounded-full border border-primary/50 flex items-center justify-center bg-primary/10">
-            <User className="w-3.5 h-3.5 text-primary" />
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <User className="w-4 h-4 text-primary" />
           </div>
         )}
-        <span className="font-mono text-xs text-foreground hidden sm:inline">
-          {name}
-        </span>
+        <span className="font-display text-sm text-foreground hidden sm:inline">{name}</span>
       </div>
       <button
         onClick={onSignOut}
-        className="flex items-center gap-1.5 px-2 py-1 border border-border rounded-sm text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-all"
+        className="glass flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-muted-foreground hover:text-destructive transition-all"
       >
-        <LogOut className="w-3 h-3" />
-        <span className="font-mono text-[10px] uppercase">Exit</span>
+        <LogOut className="w-3.5 h-3.5" />
+        <span className="font-display text-xs">Exit</span>
       </button>
     </div>
   );

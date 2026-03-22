@@ -31,17 +31,14 @@ const Index = () => {
     profile?.notifications_enabled ?? true
   );
 
-  // Sync theme
   useEffect(() => {
     if (profile?.theme) setTheme(profile.theme);
   }, [profile?.theme, setTheme]);
 
-  // Request notification permission
   useEffect(() => {
     requestPermission();
   }, [requestPermission]);
 
-  // Check for offline on ping
   const handlePingAll = async () => {
     const results = await pingAll();
     if (results) checkForOffline(results);
@@ -61,40 +58,48 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background cyber-grid relative">
-      <div className="fixed inset-0 scanline pointer-events-none z-50 opacity-20" />
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <Shield className="w-8 h-8 text-primary animate-pulse-neon" />
-              <h1 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-wider neon-text-cyan">
-                XSU Codex
-              </h1>
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">
+                  XSU Codex
+                </h1>
+                <p className="font-mono text-[11px] text-muted-foreground">
+                  Endpoint monitoring · {pingInterval}s interval
+                </p>
+              </div>
             </div>
             <UserMenu user={user} profile={profile} onSignOut={signOut} />
           </div>
-          <p className="font-mono text-xs text-muted-foreground ml-11">
-            // Autonomous endpoint keep-alive system // interval: {pingInterval}s
-          </p>
 
-          {/* Status bar */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 ml-11">
-            <div className="flex items-center gap-2">
+          {/* Status chips */}
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            <div className="glass rounded-full px-3 py-1 flex items-center gap-2">
               <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: isRunning ? "hsl(150 100% 50%)" : "hsl(0 100% 55%)" }}
+                className="w-2 h-2 rounded-full animate-pulse-neon"
+                style={{ backgroundColor: isRunning ? "hsl(160 70% 42%)" : "hsl(0 72% 55%)" }}
               />
               <span className="font-mono text-xs text-muted-foreground">
-                ENGINE: {isRunning ? "ACTIVE" : "HALTED"}
+                {isRunning ? "Active" : "Paused"}
               </span>
             </div>
-            <span className="font-mono text-xs text-muted-foreground">NODES: {endpoints.length}</span>
-            <span className="font-mono text-xs" style={{ color: "hsl(150 100% 50%)" }}>
-              ONLINE: {onlineCount}/{endpoints.length}
-            </span>
-            <span className="font-mono text-xs text-muted-foreground">LOGS: {logs.length}</span>
+            <div className="glass rounded-full px-3 py-1">
+              <span className="font-mono text-xs text-muted-foreground">{endpoints.length} endpoints</span>
+            </div>
+            <div className="glass rounded-full px-3 py-1">
+              <span className="font-mono text-xs text-accent">
+                {onlineCount}/{endpoints.length} online
+              </span>
+            </div>
+            <div className="glass rounded-full px-3 py-1">
+              <span className="font-mono text-xs text-muted-foreground">{logs.length} logs</span>
+            </div>
           </div>
         </header>
 
@@ -109,39 +114,36 @@ const Index = () => {
         <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="flex items-center gap-2 px-3 py-1.5 border rounded-sm font-display text-[10px] uppercase tracking-widest transition-all"
+            className="glass flex items-center gap-2 px-4 py-2 rounded-lg font-display text-xs font-medium transition-all hover:scale-[1.02]"
             style={{
-              borderColor: isRunning ? "hsl(150 100% 50%)" : "hsl(0 100% 55%)",
-              color: isRunning ? "hsl(150 100% 50%)" : "hsl(0 100% 55%)",
+              color: isRunning ? "hsl(160 70% 42%)" : "hsl(0 72% 55%)",
             }}
           >
-            {isRunning ? <Power className="w-3 h-3" /> : <PowerOff className="w-3 h-3" />}
+            {isRunning ? <Power className="w-3.5 h-3.5" /> : <PowerOff className="w-3.5 h-3.5" />}
             {isRunning ? "Running" : "Stopped"}
           </button>
           <button
             onClick={handlePingAll}
-            className="flex items-center gap-2 px-3 py-1.5 border border-primary text-primary rounded-sm font-display text-[10px] uppercase tracking-widest hover:bg-primary/10 transition-all"
+            className="glass flex items-center gap-2 px-4 py-2 rounded-lg font-display text-xs font-medium text-primary transition-all hover:scale-[1.02]"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3.5 h-3.5" />
             Ping All
           </button>
           <button
             onClick={() => setShowCharts(!showCharts)}
-            className={`flex items-center gap-2 px-3 py-1.5 border rounded-sm font-display text-[10px] uppercase tracking-widest transition-all ${
-              showCharts
-                ? "border-secondary text-secondary bg-secondary/10"
-                : "border-border text-muted-foreground hover:border-secondary/50"
+            className={`glass flex items-center gap-2 px-4 py-2 rounded-lg font-display text-xs font-medium transition-all hover:scale-[1.02] ${
+              showCharts ? "text-secondary" : "text-muted-foreground"
             }`}
           >
-            <BarChart3 className="w-3 h-3" />
+            <BarChart3 className="w-3.5 h-3.5" />
             Charts
           </button>
         </div>
 
         {/* Add endpoint */}
-        <div className="mb-8 p-4 border border-border rounded-sm bg-card/50">
-          <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground mb-3">
-            + Register Endpoint
+        <div className="mb-8 glass rounded-xl p-5">
+          <h2 className="font-display text-sm font-semibold text-foreground mb-3">
+            Add Endpoint
           </h2>
           <AddEndpointForm onAdd={addEndpoint} />
         </div>
@@ -149,8 +151,8 @@ const Index = () => {
         {/* Endpoint grid */}
         {endpoints.length > 0 && (
           <div className="mb-8">
-            <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground mb-4">
-              Monitored Nodes
+            <h2 className="font-display text-sm font-semibold text-foreground mb-4">
+              Monitored Endpoints
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {endpoints.map((ep) => (
@@ -168,8 +170,8 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="mt-8 text-center">
-          <p className="font-mono text-[10px] text-muted-foreground">
-            XSU CODEX // INTERVAL: {pingInterval}s // MODE: KEEP-ALIVE // 24/7
+          <p className="font-mono text-[11px] text-muted-foreground">
+            XSU Codex · Keep-Alive · 24/7
           </p>
         </footer>
       </div>

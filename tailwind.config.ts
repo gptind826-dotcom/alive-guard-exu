@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Orbitron', 'sans-serif'],
-        mono: ['Share Tech Mono', 'monospace'],
-        body: ['Rajdhani', 'sans-serif'],
+        display: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        body: ['Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -86,22 +86,13 @@ export default {
         },
         "pulse-neon": {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.7" },
-        },
-        "flicker": {
-          "0%, 100%": { opacity: "1" },
-          "92%": { opacity: "1" },
-          "93%": { opacity: "0.3" },
-          "94%": { opacity: "1" },
-          "96%": { opacity: "0.5" },
-          "97%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-neon": "pulse-neon 2s ease-in-out infinite",
-        "flicker": "flicker 4s ease-in-out infinite",
       },
     },
   },

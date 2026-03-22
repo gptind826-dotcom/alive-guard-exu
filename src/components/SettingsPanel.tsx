@@ -9,27 +9,24 @@ interface SettingsPanelProps {
 
 const INTERVALS = [
   { label: "30s", value: 30 },
-  { label: "1min", value: 60 },
-  { label: "2min", value: 120 },
-  { label: "5min", value: 300 },
+  { label: "1m", value: 60 },
+  { label: "2m", value: 120 },
+  { label: "5m", value: 300 },
 ];
 
 export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
   return (
-    <div className="border border-border rounded-sm bg-card/50 p-4">
+    <div className="glass rounded-xl p-5">
       <div className="flex items-center gap-2 mb-4">
         <Settings className="w-4 h-4 text-primary" />
-        <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground">
-          Configuration
-        </h2>
+        <h2 className="font-display text-sm font-semibold text-foreground">Settings</h2>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Sound */}
-        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5">
           <div className="flex items-center gap-2">
             <Volume2 className="w-3.5 h-3.5 text-secondary" />
-            <span className="font-mono text-xs text-foreground">Sound</span>
+            <span className="font-display text-xs text-foreground">Sound</span>
           </div>
           <Switch
             checked={profile.sound_enabled}
@@ -37,11 +34,10 @@ export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
           />
         </div>
 
-        {/* Notifications */}
-        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-accent/5">
           <div className="flex items-center gap-2">
             <Bell className="w-3.5 h-3.5 text-accent" />
-            <span className="font-mono text-xs text-foreground">Notify</span>
+            <span className="font-display text-xs text-foreground">Notify</span>
           </div>
           <Switch
             checked={profile.notifications_enabled}
@@ -49,35 +45,33 @@ export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
           />
         </div>
 
-        {/* Theme */}
-        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/5">
           <div className="flex items-center gap-2">
             <Palette className="w-3.5 h-3.5 text-primary" />
-            <span className="font-mono text-xs text-foreground">Theme</span>
+            <span className="font-display text-xs text-foreground">Theme</span>
           </div>
           <button
             onClick={() => onUpdate({ theme: profile.theme === "dark" ? "light" : "dark" })}
-            className="font-mono text-[10px] uppercase px-2 py-1 border border-border rounded-sm text-primary hover:bg-primary/10 transition-all"
+            className="font-mono text-[10px] px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all"
           >
-            {profile.theme === "dark" ? "DARK" : "LIGHT"}
+            {profile.theme === "dark" ? "Dark" : "Light"}
           </button>
         </div>
 
-        {/* Ping Interval */}
-        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-accent/5">
           <div className="flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5 text-neon-yellow" style={{ color: "hsl(50, 100%, 55%)" }} />
-            <span className="font-mono text-xs text-foreground">Interval</span>
+            <Clock className="w-3.5 h-3.5 text-accent" />
+            <span className="font-display text-xs text-foreground">Interval</span>
           </div>
           <div className="flex gap-1">
             {INTERVALS.map((i) => (
               <button
                 key={i.value}
                 onClick={() => onUpdate({ ping_interval: i.value })}
-                className={`font-mono text-[9px] px-1.5 py-0.5 rounded-sm border transition-all ${
+                className={`font-mono text-[9px] px-1.5 py-0.5 rounded-md transition-all ${
                   profile.ping_interval === i.value
-                    ? "border-primary bg-primary/20 text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/50"
+                    ? "bg-primary/20 text-primary"
+                    : "text-muted-foreground hover:bg-primary/10"
                 }`}
               >
                 {i.label}
