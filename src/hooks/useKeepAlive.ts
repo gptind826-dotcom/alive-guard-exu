@@ -46,8 +46,8 @@ export function useKeepAlive(userId: string | undefined, pingInterval: number = 
       .from("ping_logs")
       .select("*")
       .in("endpoint_id", ids)
-      .order("created_at", { ascending: true })
-      .limit(200);
+      .order("created_at", { ascending: false })
+      .limit(500);
     if (data) {
       setLogs(
         data.map((l: any) => ({
