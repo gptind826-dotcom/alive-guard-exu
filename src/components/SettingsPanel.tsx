@@ -16,17 +16,19 @@ const INTERVALS = [
 
 export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
   return (
-    <div className="glass rounded-2xl p-5">
+    <div className="glass rounded-2xl p-5 neon-box-cyan">
       <div className="flex items-center gap-2 mb-4">
-        <Settings className="w-4 h-4 text-primary" />
-        <h2 className="font-display text-sm font-bold text-foreground">Settings</h2>
+        <Settings className="w-4 h-4" style={{ color: "hsl(var(--neon-cyan))" }} />
+        <h2 className="font-display text-[10px] font-bold tracking-wider uppercase" style={{ color: "hsl(var(--neon-cyan))" }}>
+          Config
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/50">
           <div className="flex items-center gap-2">
-            <Volume2 className="w-3.5 h-3.5 text-secondary" />
-            <span className="font-display text-xs font-medium text-foreground">Sound</span>
+            <Volume2 className="w-3.5 h-3.5" style={{ color: "hsl(var(--neon-pink))" }} />
+            <span className="font-display text-[10px] font-bold tracking-wider uppercase text-foreground">Sound</span>
           </div>
           <Switch
             checked={profile.sound_enabled}
@@ -34,10 +36,10 @@ export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
           />
         </div>
 
-        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/50">
           <div className="flex items-center gap-2">
-            <Bell className="w-3.5 h-3.5 text-accent" />
-            <span className="font-display text-xs font-medium text-foreground">Notify</span>
+            <Bell className="w-3.5 h-3.5" style={{ color: "hsl(var(--neon-green))" }} />
+            <span className="font-display text-[10px] font-bold tracking-wider uppercase text-foreground">Notify</span>
           </div>
           <Switch
             checked={profile.notifications_enabled}
@@ -45,37 +47,37 @@ export function SettingsPanel({ profile, onUpdate }: SettingsPanelProps) {
           />
         </div>
 
-        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/50">
           <div className="flex items-center gap-2">
             {profile.theme === "dark" ? (
               <Moon className="w-3.5 h-3.5 text-primary" />
             ) : (
-              <Sun className="w-3.5 h-3.5 text-primary" />
+              <Sun className="w-3.5 h-3.5" style={{ color: "hsl(var(--neon-yellow))" }} />
             )}
-            <span className="font-display text-xs font-medium text-foreground">Theme</span>
+            <span className="font-display text-[10px] font-bold tracking-wider uppercase text-foreground">Theme</span>
           </div>
           <button
             onClick={() => onUpdate({ theme: profile.theme === "dark" ? "light" : "dark" })}
-            className="font-mono text-[10px] font-semibold px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+            className="font-display text-[9px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg gradient-cyber text-white hover:brightness-110 transition-all"
           >
             {profile.theme === "dark" ? "Dark" : "Light"}
           </button>
         </div>
 
-        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/50">
+        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/50">
           <div className="flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5 text-accent" />
-            <span className="font-display text-xs font-medium text-foreground">Interval</span>
+            <Clock className="w-3.5 h-3.5" style={{ color: "hsl(var(--neon-orange))" }} />
+            <span className="font-display text-[10px] font-bold tracking-wider uppercase text-foreground">Rate</span>
           </div>
           <div className="flex gap-1">
             {INTERVALS.map((i) => (
               <button
                 key={i.value}
                 onClick={() => onUpdate({ ping_interval: i.value })}
-                className={`font-mono text-[9px] font-semibold px-2 py-1 rounded-lg transition-all ${
+                className={`font-mono text-[9px] font-bold px-2 py-1 rounded-lg transition-all ${
                   profile.ping_interval === i.value
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted"
+                    ? "gradient-cyber text-white shadow-sm"
+                    : "text-muted-foreground hover:bg-muted/50"
                 }`}
               >
                 {i.label}
