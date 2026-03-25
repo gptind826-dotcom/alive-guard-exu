@@ -16,20 +16,20 @@ export function UserMenu({ user, profile, onSignOut }: UserMenuProps) {
     <div className="flex items-center gap-2.5">
       <div className="flex items-center gap-2.5">
         {avatar ? (
-          <img src={avatar} alt={name} className="w-8 h-8 rounded-xl object-cover ring-1 ring-border" />
+          <img src={avatar} alt={name} className="w-8 h-8 rounded-xl object-cover ring-2 ring-primary/30" />
         ) : (
-          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
-            <User className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-xl gradient-cyber flex items-center justify-center shadow-md shadow-primary/20">
+            <User className="w-4 h-4 text-white" />
           </div>
         )}
-        <span className="font-display text-sm font-medium text-foreground hidden sm:inline">{name}</span>
+        <span className="font-display text-[10px] font-bold tracking-wider uppercase text-foreground hidden sm:inline">{name}</span>
       </div>
       <button
         onClick={onSignOut}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass text-muted-foreground hover:text-accent hover:neon-box-pink transition-all"
       >
         <LogOut className="w-3.5 h-3.5" />
-        <span className="font-display text-xs font-medium hidden sm:inline">Sign out</span>
+        <span className="font-display text-[10px] font-bold tracking-wider uppercase hidden sm:inline">Exit</span>
       </button>
     </div>
   );

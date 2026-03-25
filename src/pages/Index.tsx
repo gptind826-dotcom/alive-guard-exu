@@ -8,7 +8,7 @@ import { LogPanel } from "@/components/LogPanel";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { UserMenu } from "@/components/UserMenu";
 import { ResponseChart } from "@/components/ResponseChart";
-import { Power, PowerOff, RefreshCw, Shield, BarChart3, Wifi, WifiOff, Activity } from "lucide-react";
+import { Power, PowerOff, RefreshCw, Shield, BarChart3, Wifi, WifiOff, Activity, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useTheme } from "next-themes";
@@ -46,10 +46,12 @@ const Index = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Shield className="w-8 h-8 text-primary animate-pulse" />
-          <p className="font-mono text-xs text-muted-foreground">Loading...</p>
+      <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl gradient-cyber flex items-center justify-center animate-pulse">
+            <Shield className="w-6 h-6 text-white" />
+          </div>
+          <p className="font-mono text-xs text-secondary uppercase tracking-widest">Initializing...</p>
         </div>
       </div>
     );
@@ -64,55 +66,59 @@ const Index = () => {
   }).length;
 
   return (
-    <div className="min-h-screen bg-background cyber-grid">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <div className="min-h-screen bg-background cyber-grid relative scanline">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
         {/* Header */}
         <header className="mb-10">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
-                <Shield className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl gradient-cyber flex items-center justify-center shadow-lg shadow-primary/30">
+                <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-display font-extrabold tracking-tight text-foreground">
+                <h1 className="text-xl sm:text-2xl font-display font-black tracking-wider neon-glow-purple" style={{ color: "hsl(var(--neon-purple))" }}>
                   XSU Codex
                 </h1>
-                <p className="font-mono text-[11px] text-muted-foreground mt-0.5">
-                  Keep-alive monitoring · {pingInterval}s cycle
+                <p className="font-mono text-[11px] mt-0.5" style={{ color: "hsl(var(--neon-cyan))" }}>
+                  <span className="opacity-60">▸</span> keep-alive · {pingInterval}s cycle
                 </p>
               </div>
             </div>
             <UserMenu user={user} profile={profile} onSignOut={signOut} />
           </div>
 
-          {/* Status bar */}
-          <div className="flex flex-wrap items-center gap-2 mt-5">
-            <div className="glass rounded-full px-3.5 py-1.5 flex items-center gap-2">
+          {/* Status chips */}
+          <div className="flex flex-wrap items-center gap-2 mt-6">
+            <div className={`glass rounded-full px-4 py-1.5 flex items-center gap-2 ${isRunning ? "neon-box-green" : "neon-box-pink"}`}>
               <div
                 className="w-2 h-2 rounded-full animate-pulse-neon"
-                style={{ backgroundColor: isRunning ? "hsl(var(--accent))" : "hsl(var(--destructive))" }}
+                style={{ backgroundColor: isRunning ? "hsl(var(--neon-green))" : "hsl(var(--destructive))", color: isRunning ? "hsl(var(--neon-green))" : "hsl(var(--destructive))" }}
               />
-              <span className="font-mono text-[11px] font-medium text-foreground">
-                {isRunning ? "Active" : "Paused"}
+              <span className="font-display text-[10px] font-bold tracking-wider" style={{ color: isRunning ? "hsl(var(--neon-green))" : "hsl(var(--destructive))" }}>
+                {isRunning ? "ACTIVE" : "PAUSED"}
               </span>
             </div>
-            <div className="glass rounded-full px-3.5 py-1.5 flex items-center gap-1.5">
-              <Activity className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-[11px] text-muted-foreground">{endpoints.length} endpoints</span>
+            <div className="glass rounded-full px-4 py-1.5 flex items-center gap-1.5">
+              <Activity className="w-3 h-3 text-primary" />
+              <span className="font-mono text-[10px] text-muted-foreground">{endpoints.length} nodes</span>
             </div>
             {onlineCount > 0 && (
-              <div className="glass rounded-full px-3.5 py-1.5 flex items-center gap-1.5">
-                <Wifi className="w-3 h-3 text-accent" />
-                <span className="font-mono text-[11px] font-medium text-accent">{onlineCount} online</span>
+              <div className="glass rounded-full px-4 py-1.5 flex items-center gap-1.5 neon-box-green">
+                <Wifi className="w-3 h-3" style={{ color: "hsl(var(--neon-green))" }} />
+                <span className="font-mono text-[10px] font-bold" style={{ color: "hsl(var(--neon-green))" }}>{onlineCount} online</span>
               </div>
             )}
             {offlineCount > 0 && (
-              <div className="glass rounded-full px-3.5 py-1.5 flex items-center gap-1.5">
-                <WifiOff className="w-3 h-3 text-destructive" />
-                <span className="font-mono text-[11px] font-medium text-destructive">{offlineCount} down</span>
+              <div className="glass rounded-full px-4 py-1.5 flex items-center gap-1.5 neon-box-pink">
+                <WifiOff className="w-3 h-3 text-accent" />
+                <span className="font-mono text-[10px] font-bold text-accent">{offlineCount} down</span>
               </div>
             )}
+            <div className="glass rounded-full px-4 py-1.5 flex items-center gap-1.5">
+              <Zap className="w-3 h-3" style={{ color: "hsl(var(--neon-yellow))" }} />
+              <span className="font-mono text-[10px] text-muted-foreground">{logs.length} logs</span>
+            </div>
           </div>
         </header>
 
@@ -120,25 +126,28 @@ const Index = () => {
         <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className={`glass flex items-center gap-2 px-4 py-2.5 rounded-xl font-display text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] ${
-              isRunning ? "text-accent ring-1 ring-accent/20" : "text-destructive ring-1 ring-destructive/20"
+            className={`glass flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-[10px] font-bold tracking-wider uppercase transition-all hover:scale-[1.03] active:scale-[0.97] ${
+              isRunning ? "neon-box-green" : "neon-box-pink"
             }`}
+            style={{ color: isRunning ? "hsl(var(--neon-green))" : "hsl(var(--destructive))" }}
           >
             {isRunning ? <Power className="w-3.5 h-3.5" /> : <PowerOff className="w-3.5 h-3.5" />}
             {isRunning ? "Running" : "Stopped"}
           </button>
           <button
             onClick={handlePingAll}
-            className="glass flex items-center gap-2 px-4 py-2.5 rounded-xl font-display text-xs font-semibold text-primary ring-1 ring-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="glass flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-[10px] font-bold tracking-wider uppercase neon-box-cyan transition-all hover:scale-[1.03] active:scale-[0.97]"
+            style={{ color: "hsl(var(--neon-cyan))" }}
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Ping All
           </button>
           <button
             onClick={() => setShowCharts(!showCharts)}
-            className={`glass flex items-center gap-2 px-4 py-2.5 rounded-xl font-display text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] ${
-              showCharts ? "text-secondary ring-1 ring-secondary/20" : "text-muted-foreground"
+            className={`glass flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-[10px] font-bold tracking-wider uppercase transition-all hover:scale-[1.03] active:scale-[0.97] ${
+              showCharts ? "neon-box-purple" : ""
             }`}
+            style={{ color: showCharts ? "hsl(var(--neon-purple))" : "hsl(var(--muted-foreground))" }}
           >
             <BarChart3 className="w-3.5 h-3.5" />
             Charts
@@ -154,9 +163,9 @@ const Index = () => {
 
         {/* Add endpoint */}
         <div className="mb-8">
-          <div className="glass rounded-2xl p-5 sm:p-6">
-            <h2 className="font-display text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-              <span className="w-1 h-4 rounded-full bg-primary" />
+          <div className="glass rounded-2xl p-5 sm:p-6 neon-box-purple" style={{ animation: "border-glow 4s ease-in-out infinite" }}>
+            <h2 className="font-display text-xs font-bold tracking-wider uppercase mb-4 flex items-center gap-2" style={{ color: "hsl(var(--neon-cyan))" }}>
+              <span className="w-1 h-4 rounded-full gradient-cyber" />
               Add Endpoint
             </h2>
             <AddEndpointForm onAdd={addEndpoint} />
@@ -166,9 +175,9 @@ const Index = () => {
         {/* Endpoint grid */}
         {endpoints.length > 0 && (
           <div className="mb-8">
-            <h2 className="font-display text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-              <span className="w-1 h-4 rounded-full bg-accent" />
-              Monitored Endpoints
+            <h2 className="font-display text-xs font-bold tracking-wider uppercase mb-4 flex items-center gap-2" style={{ color: "hsl(var(--neon-pink))" }}>
+              <span className="w-1 h-4 rounded-full gradient-cyber-pink" />
+              Monitored Nodes
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {endpoints.map((ep) => (
@@ -186,8 +195,8 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="mt-10 text-center">
-          <p className="font-mono text-[10px] text-muted-foreground/60">
-            XSU Codex · Keep-Alive Monitor · 24/7
+          <p className="font-display text-[9px] tracking-[0.3em] uppercase" style={{ color: "hsl(var(--neon-purple) / 0.4)" }}>
+            XSU Codex · Keep-Alive · 24/7
           </p>
         </footer>
       </div>
