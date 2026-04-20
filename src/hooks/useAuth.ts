@@ -16,11 +16,22 @@ export function useAuth() {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setSession(session);
+        setUser(session.user);
+        setLoading(false);
+      } else {
+        // Auto sign-in anonymously so the app works without any login UI
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (!error && data.session) {
+          setSession(data.session);
+          setUser(data.user);
+        }
+        setLoading(false);
+      }
+    })();
 
     return () => subscription.unsubscribe();
   }, []);
