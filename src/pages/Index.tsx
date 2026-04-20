@@ -10,11 +10,10 @@ import { UserMenu } from "@/components/UserMenu";
 import { ResponseChart } from "@/components/ResponseChart";
 import { Power, PowerOff, RefreshCw, Shield, BarChart3, Wifi, WifiOff, Activity, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 
 const Index = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { profile, updateProfile } = useProfile(user?.id);
   const { setTheme } = useTheme();
   const [showCharts, setShowCharts] = useState(false);
@@ -44,7 +43,7 @@ const Index = () => {
     if (results) checkForOffline(results);
   };
 
-  if (authLoading) {
+  if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -56,8 +55,6 @@ const Index = () => {
       </div>
     );
   }
-
-  if (!user) return <Navigate to="/auth" replace />;
 
   const onlineCount = endpoints.filter((ep) => getStats(ep).lastPing?.status === "online").length;
   const offlineCount = endpoints.filter((ep) => {
@@ -85,7 +82,6 @@ const Index = () => {
                 </p>
               </div>
             </div>
-            <UserMenu user={user} profile={profile} onSignOut={signOut} />
           </div>
 
           {/* Status chips */}
