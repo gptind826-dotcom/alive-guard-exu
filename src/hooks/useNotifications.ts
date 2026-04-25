@@ -41,7 +41,7 @@ export function useNotifications(soundEnabled: boolean, notificationsEnabled: bo
         if (prev === "online" && r.status !== "online") {
           playAlertSound();
           sendBrowserNotification(
-            "⚠️ XSU Codex Alert",
+            "⚠️ EXU X MAFU Alert",
             `Endpoint ${r.url} went OFFLINE!`
           );
         }
