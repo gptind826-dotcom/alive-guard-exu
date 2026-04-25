@@ -75,7 +75,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-display font-black tracking-wider neon-glow-purple" style={{ color: "hsl(var(--neon-purple))" }}>
-                  XSU Codex
+                  EXU X MAFU
                 </h1>
                 <p className="font-mono text-[11px] mt-0.5" style={{ color: "hsl(var(--neon-cyan))" }}>
                   <span className="opacity-60">▸</span> keep-alive · {pingInterval}s cycle
@@ -192,7 +192,7 @@ const Index = () => {
         {/* Footer */}
         <footer className="mt-10 text-center">
           <p className="font-display text-[9px] tracking-[0.3em] uppercase" style={{ color: "hsl(var(--neon-purple) / 0.4)" }}>
-            XSU Codex · Keep-Alive · 24/7
+            EXU X MAFU · Keep-Alive · 24/7
           </p>
         </footer>
       </div>
